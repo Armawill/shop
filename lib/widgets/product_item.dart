@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../screens/product_detail_screen.dart';
 import '../provider/product.dart';
 import '../provider/cart.dart';
+import '../provider/auth.dart';
 
 class ProductItem extends StatelessWidget {
   // final String id;
@@ -16,9 +17,11 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
+    final authData = Provider.of<Auth>(context, listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
+        // ignore: sort_child_properties_last
         child: GestureDetector(
           onTap: () {
             Navigator.of(context).pushNamed(
@@ -26,9 +29,14 @@ class ProductItem extends StatelessWidget {
               arguments: product.id,
             );
           },
-          child: Image.network(
-            product.imageUrl,
-            fit: BoxFit.cover,
+          child: Hero(
+            tag: product.id as String,
+            child: FadeInImage(
+              placeholder:
+                  const AssetImage('assets/images/product-placeholder.png'),
+              image: NetworkImage(product.imageUrl),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         footer: GridTileBar(
@@ -44,7 +52,8 @@ class ProductItem extends StatelessWidget {
                       : Icons.favorite_border),
                   onPressed: () async {
                     try {
-                      await product.toggleFavoriteStatus();
+                      await product.toggleFavoriteStatus(
+                          authData.token, authData.userId);
                     } catch (error) {
                       Scaffold.of(context).showSnackBar(SnackBar(
                           content: Text(
