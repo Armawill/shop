@@ -22,7 +22,7 @@ class _ProductsOvreviewScreenState extends State<ProductsOvreviewScreen> {
 
   @override
   void initState() {
-    // Provider.of<Products>(context).fetchAndSetProducts(); WON'T WORK
+    // Provider.of<Products>(context).fetchAndSetProducts(); // WON'T WORK
     super.initState();
   }
 
